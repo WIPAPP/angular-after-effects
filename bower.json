@@ -1,0 +1,31 @@
+{
+  "name": "angular-after-effects",
+  "version": "0.0.1",
+  "description": "After effects service for AngularJS",
+  "authors": [
+    "Jimmi Corbishley <jimmi@wipster.io>"
+  ],
+  "main": [
+    "jsx/ae.jsx",
+    "index.js"
+  ],
+  "keywords": [
+    "angular"
+  ],
+  "private": true,
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.4.7",
+    "angular-adobe": "https://github.com/WIPAPP/angular-adobe.git#wipster"
+  },
+  "devDependencies": {
+    "angular-mocks": "~1.4.7"
+  }
+}

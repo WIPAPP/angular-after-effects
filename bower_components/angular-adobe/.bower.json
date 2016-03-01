@@ -1,0 +1,37 @@
+{
+  "name": "angular-adobe",
+  "description": "Adobe base module for AngularJS",
+  "authors": [
+    "Codemill <info@codemill.se>",
+    "Jimmi Corbishley <jimmi@wipster.io>"
+  ],
+  "main": "index.js",
+  "keywords": [
+    "angular"
+  ],
+  "private": true,
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.4.7"
+  },
+  "devDependencies": {
+    "angular-mocks": "~1.4.7"
+  },
+  "homepage": "https://github.com/WIPAPP/angular-adobe",
+  "_release": "54b99ec6f0",
+  "_resolution": {
+    "type": "branch",
+    "branch": "wipster",
+    "commit": "54b99ec6f0d038ae8ebf14e783adbbb83246dbc7"
+  },
+  "_source": "https://github.com/WIPAPP/angular-adobe.git",
+  "_target": "wipster",
+  "_originalSource": "https://github.com/WIPAPP/angular-adobe.git"
+}
