@@ -18,8 +18,8 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
             return { method: 'renderSequence', args: [presetPath, outputPath] };
         }
 
-        function getActiveSequence() {
-            return { method: 'getActiveSequence', returnsObject: true };
+        function getActiveItem() {
+            return { method: 'getActiveItem', returnsObject: true };
         }
 
         function clearSequenceMarkers() {
@@ -59,7 +59,7 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
         function runWithActiveSequenceCheck(callOpts) {
             if (adobeService.isHostAvailable()) {
                 var deferred = $q.defer();
-                adobeService.callCS(getActiveSequence())
+                adobeService.callCS(getActiveItem())
                   .then(function (sequence) {
                       if (typeof sequence === 'undefined' || sequence === null || sequence.id === "" || sequence.name === "name") {
                           deferred.reject(new Error('No active sequence : 11'));
@@ -129,9 +129,11 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
               s4() + '-' + s4() + s4() + s4();
         };
 
-        this.getActiveSequence = function () {
+        this.getActiveItem = function () {
+            $log.debug("inside AE service");
             if (adobeService.isHostAvailable()) {
-                return adobeService.callCS(getActiveSequence());
+                $log.debug("AE host is avaliable");
+                return adobeService.callCS(getActiveItem());
             } else {
                 return $q.when({
                     'id': guid(),

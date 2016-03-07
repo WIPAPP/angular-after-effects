@@ -2,7 +2,7 @@ function renderSequence(presetPath, outputPath) {
     //app.enableQE();
     var jobID = undefined;
     $.writeln(app.project);
-    var activeSequence = app.project.getActiveSequence();
+    var activeSequence = app.project.getActiveItem();
     if (activeSequence != undefined) {
         app.encoder.launchEncoder();
 
@@ -641,62 +641,83 @@ function getAnimatedProperty(data, split) {
     return arr;
 }
 
-function getActiveSequence() {
+function getActiveItem() {
     var data = {
         id: null,
         name: null
     };
+    var activeItem = app.project.activeItem;
+    $.writeln('activeItem: ', activeItem);
+    
+    if (activeItem) {
+        var t = app.project.renderQueue.render()
+        data = {
+            'id': activeItem.id,
+            'name': activeItem.name
+        };
+    };
 
+    if (typeof JSON !== 'object') {
+        return '{"id":"' + activeItem.id + '","name": "' + activeItem.name + '"}'
+    };
+    $.writeln('data', data);
+    return JSON.stringify(data);
 
     //app.enableQE();
+
+    //var t = activeItem.getRenderGUID();
+    //$.writeln('guid: ', t);
+
     //var myMarker = new MarkerValue("jimmi test");
     //app.project.activeItem.layers[1].property("Marker").setValueAtTime(2, myMarker);
-    $.writeln('propertyValueType', app.project.activeItem);
-    $.writeln('items: ', app.project.items);
-    $.writeln('layer: ', app.project.item(1));
-    $.writeln('file: ', app.project.activeItem.layers[1].name);
+    //$.writeln('propertyValueType', app.project.activeItem);
+    //$.writeln('items: ', app.project.items);
+    //$.writeln('layer: ', app.project.item(1));
+    //$.writeln('file: ', app.project.activeItem.layers[1].name);
 
-    var activeItem = app.project.activeItem;
-    var tempNull = activeItem.layers.addNull(activeItem.duration);
-    $.writeln('tempNull: ', tempNull);
-    $.writeln('tempNull1: ', tempNull.property("ADBE Transform Group").property("ADBE Position"));
-    $.writeln('file32: ', tempNull.property("ADBE Transform Group").property("ADBE Position").value);
-
-    var data = getComp(app.project.activeItem)
-
-    $.writeln('data: ', data);
-    $.writeln('markers: ', data.markers);
-    $.writeln('length: ', data.markers.length);
-    $.writeln('length: ', data.markers[0].comment);
     //var activeItem = app.project.activeItem;
+    //data.id = activeItem.id;
+    //data.name = activeItem.name;
     //var tempNull = activeItem.layers.addNull(activeItem.duration);
-    //var tempPos = tempNull.property("ADBE Transform Group").property("ADBE Position");
+    //$.writeln('tempNull: ', tempNull);
+    //$.writeln('tempNull1: ', tempNull.property("ADBE Transform Group").property("ADBE Position"));
+    //$.writeln('file32: ', tempNull.property("ADBE Transform Group").property("ADBE Position").value);
 
-    //tempPos.expression = "x = thisComp.marker.numKeys;[x,0];"; 
-    //var result = tempPos.value[0];
+    ////var data = getComp(app.project.activeItem)
 
-    //$.writeln("There are " + result + " comp markers");
+    //$.writeln('data: ', data);
+    //$.writeln('markers: ', data.markers);
+    //$.writeln('length: ', data.markers.length);
+    //$.writeln('length: ', data.markers[0].comment);
+    ////var activeItem = app.project.activeItem;
+    ////var tempNull = activeItem.layers.addNull(activeItem.duration);
+    ////var tempPos = tempNull.property("ADBE Transform Group").property("ADBE Position");
 
-    //for (x = 1; x <= result; x++) {
-    //    tempPos.expression = "x = thisComp.marker.key(" + x + ").time;[x,0];";
-    //    $.writeln("Marker " + x + " time = " + tempPos.value[0]);
-    //}
+    ////tempPos.expression = "x = thisComp.marker.numKeys;[x,0];"; 
+    ////var result = tempPos.value[0];
 
-    //tempNull.remove();
+    ////$.writeln("There are " + result + " comp markers");
+
+    ////for (x = 1; x <= result; x++) {
+    ////    tempPos.expression = "x = thisComp.marker.key(" + x + ").time;[x,0];";
+    ////    $.writeln("Marker " + x + " time = " + tempPos.value[0]);
+    ////}
+
+    ////tempNull.remove();
 
 
 
-    var activeSequence = app.project.getActiveSequence();
-    if (activeSequence) {
-        data = {
-            'id': activeSequence.guid,
-            'name': activeSequence.name
-        };
-    }
-    if (typeof JSON !== 'object') {
-        return '{"id":"' + activeSequence.guid + '","name": "' + activeSequence.name + '"}'
-    }
-    return JSON.stringify(data);
+    ////var activeSequence = app.project.getActiveSequence();
+    ////if (activeSequence) {
+    ////    data = {
+    ////        'id': activeSequence.guid,
+    ////        'name': activeSequence.name
+    ////    };
+    ////}
+    ////if (typeof JSON !== 'object') {
+    ////    return '{"id":"' + activeSequence.guid + '","name": "' + activeSequence.name + '"}'
+    ////}
+    //return JSON.stringify(data);
 }
 
 function calculateOutputFilename(outputPath, activeSequence, extension) {
@@ -704,16 +725,16 @@ function calculateOutputFilename(outputPath, activeSequence, extension) {
 }
 
 function getPathSeparatorByOS() {
-    app.enableQE();
-    if (qe === undefined || qe === null || qe.project === undefined || qe.project === null) {
-        return;
-    }
+    //app.enableQE();
+    //if (qe === undefined || qe === null || qe.project === undefined || qe.project === null) {
+    //    return;
+    //}
 
-    if (qe.platform !== undefined && qe.platform === 'Macintosh') {
-        return '/';
-    } else {
+    //if (qe.platform !== undefined && qe.platform === 'Macintosh') {
+    //    return '/';
+    //} else {
         return '\\';
-    }
+    //}
 }
 
 function loadPluginLib() {
