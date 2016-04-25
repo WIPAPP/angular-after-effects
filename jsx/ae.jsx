@@ -1,110 +1,32 @@
 function renderSequence(presetPath, outputPath) {
+    $.writeln("inside renderSequence");
     //app.enableQE();
     var jobID = undefined;
-    $.writeln(app.project);
-    var activeSequence = app.project.getActiveItem();
+
+    var activeSequence = app.project.activeItem;
     if (activeSequence != undefined) {
-        app.encoder.launchEncoder();
 
-        function onEncoderJobComplete(jobID, outputFilePath) {
-            loadPluginLib();
-            var eventObj = new CSXSEvent();
+        app.project.renderQueue.items.add(activeSequence);
 
-            eventObj.type = "se.codemill.ppro.RenderEvent";
-            if (typeof JSON !== 'object') {
-                eventObj.data = "{\"type\": \"complete\",\"jobID\": jobID,\"outputFilePath\": outputFilePath}";
-            } else {
-                eventObj.data = JSON.stringify({
-                    'type': 'complete',
-                    'jobID': jobID,
-                    'outputFilePath': outputFilePath
-                });
-            }
+        var file = new File(calculateOutputFilename(outputPath, activeSequence, "avi"));//todo change this to prefix of video
 
-            eventObj.dispatch();
-        }
+        app.project.renderQueue.item(1).outputModule(1).file = file;
 
-        function onEncoderJobError(jobID, errorMessage) {
-            loadPluginLib();
-            var eventObj = new CSXSEvent();
+        // app.project.renderQueue.item(1).outputModule(1).file = app.project.file; outputPath
+        //app.project.renderQueue.item(1).applyTemplate("MY SETTINGS");
+        // app.project.renderQueue.item(1).outputModules[1].applyTemplate("MY SETTINGS");
+        // app.executeCommand(3800); //Add to media encodre queue
+        app.project.save();
+         app.project.renderQueue.render(); //Triggers render inside AE.
+         return outputPath + activeSequence.name + ".avi";
+        //$.writeln("status: ", app.project.renderQueue.item(1).status);
+        //$.writeln("RQItemStatus.RENDERING: ", RQItemStatus.RENDERING);
+        //$.writeln("RQItemStatus.DONE: ", RQItemStatus.DONE);
+        //$.writeln("RQItemStatus.QUEUED: ", RQItemStatus.QUEUED);
 
-            eventObj.type = "se.codemill.ppro.RenderEvent";
-            if (typeof JSON !== 'object') {
-                eventObj.data = "{\"type\": \"error\",\"jobID\": jobID,\"errorMessage\": errorMessage}";
-            } else {
-                eventObj.data = JSON.stringify({
-                    'type': 'error',
-                    'jobID': jobID,
-                    'errorMessage': errorMessage
-                });
-            }
-
-            eventObj.dispatch();
-        }
-
-        function onEncoderJobProgress(jobID, progress) {
-            loadPluginLib();
-            var eventObj = new CSXSEvent();
-
-            eventObj.type = "se.codemill.ppro.RenderEvent";
-
-            if (typeof JSON !== 'object') {
-                eventObj.data = "{\"type\": \"progress\",\"jobID\": jobID,\"progress\": progress}";
-            } else {
-                eventObj.data = JSON.stringify({
-                    'type': 'progress',
-                    'jobID': jobID,
-                    'progress': progress
-                });
-            }
-            eventObj.dispatch();
-        }
-
-        function onEncoderJobQueued(jobID) {
-            app.encoder.startBatch();
-        }
-
-        var projPath = new File(app.project.path);
-        if (outputPath == undefined) {
-            outputPath = Folder.selectDialog("Choose the output directory").fsName;
-        }
-
-        if (outputPath != null && projPath.exists) {
-            var outputPresetPath = getPresetPath(presetPath);
-            var outPreset = new File(outputPresetPath);
-            if (outPreset.exists == true) {
-
-                var outputFormatExtension = activeSequence.getExportFileExtension(outPreset.fsName);
-
-                if (outputFormatExtension != null) {
-                    var fullPathToFile = calculateOutputFilename(outputPath, activeSequence, outputFormatExtension);
-
-                    app.encoder.bind('onEncoderJobComplete', onEncoderJobComplete);
-                    app.encoder.bind('onEncoderJobError', onEncoderJobError);
-                    app.encoder.bind('onEncoderJobProgress', onEncoderJobProgress);
-                    app.encoder.bind('onEncoderJobQueued', onEncoderJobQueued);
-
-                    // use these 0 or 1 settings to disable some/all metadata creation.
-
-                    app.encoder.setSidecarXMPEnabled(0);
-                    app.encoder.setEmbeddedXMPEnabled(0);
-
-                    jobID = app.encoder.encodeSequence(app.project.activeSequence,
-                      fullPathToFile,
-                      outPreset.fsName,
-                      app.encoder.ENCODE_ENTIRE);
-                    outPreset.close();
-                }
-            } else {
-                alert("Could not find output preset.");
-            }
-        } else {
-            alert("Could not find/create output path.");
-        }
-        projPath.close();
     }
 
-    return jobID;
+    return null;
 }
 
 function removeZValue(frames) {
@@ -647,10 +569,11 @@ function getActiveItem() {
         name: null
     };
     var activeItem = app.project.activeItem;
-    $.writeln('activeItem: ', activeItem);
-    
+    //$.writeln('activeItem: ', activeItem);
+    //$.writeln('id: ', activeItem.id);
+    //$.writeln('selected: ', activeItem.selected);
+    //$.writeln('name: ', activeItem.name);
     if (activeItem) {
-        var t = app.project.renderQueue.render()
         data = {
             'id': activeItem.id,
             'name': activeItem.name
@@ -660,7 +583,7 @@ function getActiveItem() {
     if (typeof JSON !== 'object') {
         return '{"id":"' + activeItem.id + '","name": "' + activeItem.name + '"}'
     };
-    $.writeln('data', data);
+
     return JSON.stringify(data);
 
     //app.enableQE();
@@ -733,7 +656,7 @@ function getPathSeparatorByOS() {
     //if (qe.platform !== undefined && qe.platform === 'Macintosh') {
     //    return '/';
     //} else {
-        return '\\';
+    return '\\';
     //}
 }
 
