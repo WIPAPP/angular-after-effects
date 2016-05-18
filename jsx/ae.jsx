@@ -29,6 +29,25 @@ function renderSequence(presetPath, outputPath) {
     return null;
 }
 
+function setCompMarkers(data) {
+
+    var json;
+
+    if (typeof JSON !== 'object') {
+        json = Function("return " + data + "")();
+    } else {
+        json = JSON.parse(data);
+    }
+
+    for (var i = 0; i < json.length; i++) {
+        var myMarker = new MarkerValue(json[i].comments);
+        app.project.activeItem.layers[1].property("Marker").setValueAtTime(json[i].start, myMarker);
+    }
+
+    return json;
+
+}
+
 function removeZValue(frames) {
     for (var i = 0; i < frames.length; i++) frames[i].v.length > 2 && frames[i].v.pop();
     return frames;
@@ -254,7 +273,7 @@ function getComp(data) {
             var comment = tempText.property("ADBE Text Properties").property("ADBE Text Document").value.text, time = 1e3 * tempText.property("ADBE Transform Group").property("ADBE Position").value[0];
             comment = comment.replace(/(\r\n|\n|\r)/gm, " "), time = Math.round(time), tempText.remove(),
             markers.push({
-                comment: " jimmi", //comment + 
+                comment: comment, 
                 time: time,
                 stop: comment.toLocaleLowerCase().indexOf("stop") > -1
             });
