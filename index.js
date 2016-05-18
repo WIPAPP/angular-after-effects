@@ -130,9 +130,7 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
         };
 
         this.getActiveItem = function () {
-            $log.debug("inside AE service");
             if (adobeService.isHostAvailable()) {
-                $log.debug("AE host is avaliable");
                 return adobeService.callCS(getActiveItem());
             } else {
                 return $q.when({
