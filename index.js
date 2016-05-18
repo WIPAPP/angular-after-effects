@@ -30,6 +30,10 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
             return { method: 'createSequenceMarkers', args: [markers] };
         }
 
+        function setCompMarkers(data) {
+            return { method: 'setCompMarkers', args: [data] };
+        }
+
         function handleRenderEvent(event) {
             var jobID = event.data.jobID;
             if (jobID in jobs) {
@@ -113,9 +117,10 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
             return runWithActiveSequenceCheck(clearSequenceMarkers());
         };
 
-        this.createSequenceMarkers = function (markers) {
-            $log.debug('markers: ', markers)
-            return runWithActiveSequenceCheck(createSequenceMarkers(markers));
+        this.createSequenceMarkers = function (data) {
+            $log.debug('markers: ', data)
+            return adobeService.callCS(setCompMarkers(data));
+            //return runWithActiveSequenceCheck(createSequenceMarkers(markers));
         };
 
         var guid = function () {

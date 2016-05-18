@@ -38,7 +38,18 @@ function setCompMarkers(data) {
     } else {
         json = JSON.parse(data);
     }
+    var markers = app.project.activeItem.layers[1].property("marker");
 
+    //$.writeln("markers.numKeys: ", markers.numKeys)
+    for (var i = 1; i < markers.numKeys; i++)
+    {
+        var myMarker = markers.keyValue(i);
+        $.writeln("marker: " + i + " ", myMarker.comment);
+    }
+
+    //AEGP_SetItemCurrentTime 
+
+    //working
     for (var i = 0; i < json.length; i++) {
         var myMarker = new MarkerValue(json[i].comments);
         app.project.activeItem.layers[1].property("Marker").setValueAtTime(json[i].start, myMarker);
