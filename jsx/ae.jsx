@@ -1,5 +1,5 @@
 function renderSequence(presetPath, outputPath) {
-    $.writeln("inside renderSequence");
+    
     //app.enableQE();
     var jobID = undefined;
 
@@ -29,33 +29,42 @@ function renderSequence(presetPath, outputPath) {
     return null;
 }
 
+function setCurrentTimeIndicator(time) {
+    app.project.activeItem.time = time
+}
+
 function setCompMarkers(data) {
 
-    var json;
+    //var json;
 
-    if (typeof JSON !== 'object') {
-        json = Function("return " + data + "")();
-    } else {
-        json = JSON.parse(data);
-    }
-    var markers = app.project.activeItem.layers[1].property("marker");
+    //if (typeof JSON !== 'object') {
+    //    json = Function("return " + data + "")();
+    //} else {
+    //    json = JSON.parse(data);
+    //}
+    //JSON.stringify(app.project.activeItem.layers[1])
+    //var markers = app.project.activeItem.layers[1].property("marker");
 
-    //$.writeln("markers.numKeys: ", markers.numKeys)
-    for (var i = 1; i < markers.numKeys; i++)
-    {
-        var myMarker = markers.keyValue(i);
-        $.writeln("marker: " + i + " ", myMarker.comment);
-    }
+    ////$.writeln("markers.numKeys: ", markers.numKeys)
+    //for (var i = 1; i < markers.numKeys; i++)
+    //{
+    //    var myMarker = markers.keyValue(i);
+    //    $.writeln("marker: " + i + " ", myMarker.comment);
+    //}
 
+    //$.writeln("time before: ", app.project.activeItem.time);
+   // JSON.stringify(app.project.activeItem);
+
+   // app.project.activeItem.time = 65.7650984317651
     //AEGP_SetItemCurrentTime 
+    //$.writeln("time after: ", app.project.activeItem.time);
+    ////working
+    //for (var i = 0; i < json.length; i++) {
+    //    var myMarker = new MarkerValue(json[i].comments);
+    //    app.project.activeItem.layers[1].property("Marker").setValueAtTime(json[i].start, myMarker);
+    //}
 
-    //working
-    for (var i = 0; i < json.length; i++) {
-        var myMarker = new MarkerValue(json[i].comments);
-        app.project.activeItem.layers[1].property("Marker").setValueAtTime(json[i].start, myMarker);
-    }
-
-    return json;
+  //  return json;
 
 }
 
@@ -114,9 +123,9 @@ function dist2d(x1, y1, x2, y2) {
 }
 
 function printObj(obj) {
-    $.writeln("-----------------------");
+   // $.writeln("-----------------------");
     for (var key in obj) obj.hasOwnProperty(key) && ("function" == typeof obj[key] ? $.writeln(key + ": function") : $.writeln(key + ": " + obj[key]));
-    $.writeln("-----------------------");
+    //$.writeln("-----------------------");
 }
 
 function reflectObj(obj) {

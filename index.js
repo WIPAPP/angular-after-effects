@@ -34,6 +34,10 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
             return { method: 'setCompMarkers', args: [data] };
         }
 
+        function setCurrentTimeIndicator(time) {
+            return { method: 'setCurrentTimeIndicator', args: [time] }
+        }
+
         function handleRenderEvent(event) {
             var jobID = event.data.jobID;
             if (jobID in jobs) {
@@ -144,5 +148,11 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
                 });
             }
         };
+
+        this.setCurrentTimeIndicator = function(time) {
+            if (adobeService.isHostAvailable()) {
+                return adobeService.callCS(setCurrentTimeIndicator(time));
+            }
+        }
 
     }]);
