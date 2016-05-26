@@ -30,8 +30,8 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
             return { method: 'createSequenceMarkers', args: [markers] };
         }
 
-        function setCompMarkers(data) {
-            return { method: 'setCompMarkers', args: [data] };
+        function setNullLayerMarkers(data) {
+            return { method: 'setNullLayerMarkers', args: [data] };
         }
 
         function setCurrentTimeIndicator(time) {
@@ -123,7 +123,7 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
 
         this.createSequenceMarkers = function (data) {
             $log.debug('markers: ', data)
-            return adobeService.callCS(setCompMarkers(data));
+            return adobeService.callCS(setNullLayerMarkers(data));
             //return runWithActiveSequenceCheck(createSequenceMarkers(markers));
         };
 
