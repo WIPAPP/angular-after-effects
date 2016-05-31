@@ -14,8 +14,8 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
             delete jobs[jobID];
         }
 
-        function renderSequence(presetPath, outputPath) {
-            return { method: 'renderSequence', args: [presetPath, outputPath] };
+        function renderItem(outputPath) {
+            return { method: 'renderItem', args: [outputPath] };
         }
 
         function getActiveItem() {
@@ -89,31 +89,18 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
                 return $q.when();
             }
         }
+
         this.renderActiveSequence = function (config) {
             var deferred = $q.defer();
             var outputPath = adobeService.getFilePath(config.output);
-            var presetPath = adobeService.getFilePath(config.preset);
-            if (!adobeService.isHostAvailable()) {
-                var iteration = 0;
-                var iterationFunc = function () {
-                    if (iteration >= 10) {
-                        deferred.resolve(outputPath + 'test.mp4');
-                    } else {
-                        deferred.notify(iteration * 10);
-                        iteration += 1;
-                        $timeout(iterationFunc, 250);
-                    }
-                };
-                $timeout(iterationFunc, 250);
-            } else {
-                runWithActiveSequenceCheck(renderSequence(presetPath, outputPath))
-                  .then(function (jobID) {
-                      registerJob(jobID, deferred);
+
+            runWithActiveSequenceCheck(renderItem(outputPath))
+                  .then(function (path) {
+                      deferred.resolve(path);
                   })
                   .catch(function (error) {
                       deferred.reject(error);
                   });
-            }
             return deferred.promise;
         };
 
