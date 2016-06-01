@@ -96,7 +96,9 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
 
             runWithActiveSequenceCheck(renderItem(outputPath))
                   .then(function (path) {
-                      deferred.resolve(path);
+                      //We get a funny path from AE so we need to correct it.
+                      var pathOfRender = outputPath + path.split('/').pop();                       
+                      deferred.resolve(decodeURIComponent(pathOfRender));  
                   })
                   .catch(function (error) {
                       deferred.reject(error);
