@@ -67,7 +67,7 @@ function setCompMarkers(data) {
   //  return json;
 
 }
-
+/*
 function removeZValue(frames) {
     for (var i = 0; i < frames.length; i++) frames[i].v.length > 2 && frames[i].v.pop();
     return frames;
@@ -601,7 +601,7 @@ function getAnimatedProperty(data, split) {
     }
     return arr;
 }
-
+*/
 function getActiveItem() {
     var data = {
         id: null,
