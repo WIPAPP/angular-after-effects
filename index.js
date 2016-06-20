@@ -38,31 +38,6 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
             return { method: 'setCurrentTimeIndicator', args: [time] }
         }
 
-        function handleRenderEvent(event) {
-            var jobID = event.data.jobID;
-            if (jobID in jobs) {
-                var deferred = jobs[jobID];
-                switch (event.data.type) {
-                    case 'error':
-                        $log.error('Failed rendering sequence', event.data.error);
-                        deferred.reject('Failed rendering sequence');
-                        unregisterJob(jobID);
-                        break;
-                    case 'progress':
-                        deferred.notify(event.data.progress * 100);
-                        break;
-                    case 'complete':
-                        $log.info('File from host: ', event.data.outputFilePath);
-                        deferred.resolve(event.data.outputFilePath);
-                        unregisterJob(jobID);
-                        break;
-                }
-            }
-        }
-
-        if (adobeService.isHostAvailable()) {
-            adobeService.registerEventListener('se.codemill.ppro.RenderEvent', handleRenderEvent);
-        }
 
         function runWithActiveSequenceCheck(callOpts) {
             if (adobeService.isHostAvailable()) {
