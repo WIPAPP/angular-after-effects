@@ -8,39 +8,39 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
 
         function registerJob(jobID, deferred) {
             jobs[jobID] = deferred;
-        }
+        };
 
         function unregisterJob(jobID) {
             delete jobs[jobID];
-        }
+        };
 
-        function renderItem(outputPath, template) {
-            return { method: 'renderItem', args: [outputPath, template] };
-        }
+        function renderItem(outputPath, outputTemplate, renderTemplate) {
+            return { method: 'renderItem', args: [outputPath, outputTemplate, renderTemplate] };
+        };
 
         function getActiveItem() {
             return { method: 'getActiveItem', returnsObject: true };
-        }
+        };
 
         function clearSequenceMarkers() {
             return { method: 'clearSequenceMarkers' };
-        }
+        };
 
         function createSequenceMarkers(markers) {
             return { method: 'createSequenceMarkers', args: [markers] };
-        }
+        };
 
         function setNullLayerMarkers(data) {
             return { method: 'setNullLayerMarkers', args: [data] };
-        }
+        };
 
         function setCurrentTimeIndicator(time) {
             return { method: 'setCurrentTimeIndicator', args: [time] }
-        }
+        };
 
         function getOutputTemplates(presetPath) {
             return { method: 'getOutputTemplates', args: [presetPath] };
-        }
+        };
 
         function runWithActiveSequenceCheck(callOpts) {
             if (adobeService.isHostAvailable()) {
@@ -66,13 +66,29 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
             } else {
                 return $q.when();
             }
-        }
+        };
 
-        this.renderActiveSequence = function (config, template) {
+        var getOutputTemplate = function (presetQuality) {
+            if (typeof presetQuality === "undefined" || presetQuality === null) {
+                return "AVI DV NTSC 48kHz";
+            }
+            if (presetQuality.indexOf("NTSC") > -1) {
+                return "AVI DV NTSC 48kHz";
+            }
+            return "AVI DV PAL 48kHz";
+        };
+
+        var getRenderTemplate = function(presetQuality) {
+            return typeof presetQuality === "undefined" || presetQuality === null || presetQuality.indexOf("high") === -1
+                ? "Draft Settings"
+                : "Best Settings";
+        };
+
+        this.renderActiveSequence = function (config, presetQuality) {
             var deferred = $q.defer();
             var outputPath = adobeService.getFilePath(config.output);
            // $log.debug("config.preset: ", config.preset);
-            runWithActiveSequenceCheck(renderItem(outputPath, template))
+            runWithActiveSequenceCheck(renderItem(outputPath, getOutputTemplate(presetQuality), getRenderTemplate(presetQuality)))
                   .then(function (path) {
                       //We get a funny path from AE so we need to correct it.
                       var pathOfRender = outputPath + (outputPath.endsWith("/") ? "" : "/") + path.split('/').pop();                       
@@ -116,14 +132,14 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
             }
         };
 
-        this.getOutputTemplates = function (presetPath) {
+        this.getOutputTemplates = function(presetPath) {
             return adobeService.callCS(getOutputTemplates(presetPath));
-        }
+        };
 
         this.setCurrentTimeIndicator = function(time) {
             if (adobeService.isHostAvailable()) {
                 return adobeService.callCS(setCurrentTimeIndicator(time));
             }
-        }
+        };
 
     }]);
