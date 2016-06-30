@@ -14,8 +14,8 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
             delete jobs[jobID];
         }
 
-        function renderItem(outputPath) {
-            return { method: 'renderItem', args: [outputPath] };
+        function renderItem(outputPath, template) {
+            return { method: 'renderItem', args: [outputPath, template] };
         }
 
         function getActiveItem() {
@@ -38,6 +38,9 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
             return { method: 'setCurrentTimeIndicator', args: [time] }
         }
 
+        function getOutputTemplates(presetPath) {
+            return { method: 'getOutputTemplates', args: [presetPath] };
+        }
 
         function runWithActiveSequenceCheck(callOpts) {
             if (adobeService.isHostAvailable()) {
@@ -65,11 +68,11 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
             }
         }
 
-        this.renderActiveSequence = function (config) {
+        this.renderActiveSequence = function (config, template) {
             var deferred = $q.defer();
             var outputPath = adobeService.getFilePath(config.output);
-
-            runWithActiveSequenceCheck(renderItem(outputPath))
+           // $log.debug("config.preset: ", config.preset);
+            runWithActiveSequenceCheck(renderItem(outputPath, template))
                   .then(function (path) {
                       //We get a funny path from AE so we need to correct it.
                       var pathOfRender = outputPath + (outputPath.endsWith("/") ? "" : "/") + path.split('/').pop();                       
@@ -86,7 +89,7 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
         };
 
         this.createSequenceMarkers = function (data) {
-            $log.debug('markers: ', data)
+            $log.debug('markers: ', data);
             return adobeService.callCS(setNullLayerMarkers(data));
             //return runWithActiveSequenceCheck(createSequenceMarkers(markers));
         };
@@ -112,6 +115,10 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
                 });
             }
         };
+
+        this.getOutputTemplates = function (presetPath) {
+            return adobeService.callCS(getOutputTemplates(presetPath));
+        }
 
         this.setCurrentTimeIndicator = function(time) {
             if (adobeService.isHostAvailable()) {
