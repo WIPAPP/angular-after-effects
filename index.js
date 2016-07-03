@@ -41,7 +41,9 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
         function getOutputTemplates(presetPath) {
             return { method: 'getOutputTemplates', args: [presetPath] };
         };
-
+        function getRenderTemplates() {
+            return { method: 'getRenderTemplates'}
+        };
         function runWithActiveSequenceCheck(callOpts) {
             if (adobeService.isHostAvailable()) {
                 var deferred = $q.defer();
@@ -79,7 +81,7 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
         };
 
         var getRenderTemplate = function(presetQuality) {
-            return typeof presetQuality === "undefined" || presetQuality === null || presetQuality.indexOf("high") === -1
+            return typeof presetQuality === "undefined" || presetQuality === null || presetQuality.indexOf("High") === -1
                 ? "Draft Settings"
                 : "Best Settings";
         };
@@ -88,7 +90,7 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
             var deferred = $q.defer();
             var outputPath = adobeService.getFilePath(config.output);
            // $log.debug("config.preset: ", config.preset);
-            runWithActiveSequenceCheck(renderItem(outputPath, getOutputTemplate(presetQuality), getRenderTemplate(presetQuality)))
+            runWithActiveSequenceCheck(renderItem(outputPath, presetQuality, getRenderTemplate(presetQuality)))
                   .then(function (path) {
                       //We get a funny path from AE so we need to correct it.
                       var pathOfRender = outputPath + (outputPath.endsWith("/") ? "" : "/") + path.split('/').pop();                       
@@ -131,11 +133,12 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
                 });
             }
         };
-
+        this.getRenderTemplates = function() {
+            return adobeService.callCS(getRenderTemplates());
+        };
         this.getOutputTemplates = function(presetPath) {
             return adobeService.callCS(getOutputTemplates(presetPath));
         };
-
         this.setCurrentTimeIndicator = function(time) {
             if (adobeService.isHostAvailable()) {
                 return adobeService.callCS(setCurrentTimeIndicator(time));
