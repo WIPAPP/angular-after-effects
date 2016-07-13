@@ -9,40 +9,35 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
         function registerJob(jobID, deferred) {
             jobs[jobID] = deferred;
         };
-
         function unregisterJob(jobID) {
             delete jobs[jobID];
         };
-
         function renderItem(outputPath, outputTemplate, renderTemplate) {
             return { method: 'renderItem', args: [outputPath, outputTemplate, renderTemplate] };
         };
-
         function getActiveItem() {
             return { method: 'getActiveItem', returnsObject: true };
         };
-
         function clearSequenceMarkers() {
             return { method: 'clearSequenceMarkers' };
         };
-
         function createSequenceMarkers(markers) {
             return { method: 'createSequenceMarkers', args: [markers] };
         };
-
         function setNullLayerMarkers(data) {
             return { method: 'setNullLayerMarkers', args: [data] };
         };
-
         function setCurrentTimeIndicator(time) {
             return { method: 'setCurrentTimeIndicator', args: [time] }
         };
-
         function getOutputTemplates(presetPath) {
             return { method: 'getOutputTemplates', args: [presetPath] };
         };
         function getRenderTemplates() {
             return { method: 'getRenderTemplates'}
+        };
+        function getWorkAreaStart() {
+            return { method: 'getWorkAreaStart' }
         };
         function runWithActiveSequenceCheck(callOpts) {
             if (adobeService.isHostAvailable()) {
@@ -89,7 +84,6 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
         this.renderActiveSequence = function (config, presetQuality) {
             var deferred = $q.defer();
             var outputPath = adobeService.getFilePath(config.output);
-           // $log.debug("config.preset: ", config.preset);
             runWithActiveSequenceCheck(renderItem(outputPath, presetQuality, getRenderTemplate(presetQuality)))
                   .then(function (path) {
                       //We get a funny path from AE so we need to correct it.
@@ -109,7 +103,6 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
         this.createSequenceMarkers = function (data) {
             $log.debug('markers: ', data);
             return adobeService.callCS(setNullLayerMarkers(data));
-            //return runWithActiveSequenceCheck(createSequenceMarkers(markers));
         };
 
         var guid = function () {
@@ -143,6 +136,9 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
             if (adobeService.isHostAvailable()) {
                 return adobeService.callCS(setCurrentTimeIndicator(time));
             }
+        };
+        this.getWorkAreaStart = function() {
+            return adobeService.callCS(getWorkAreaStart());
         };
 
     }]);
