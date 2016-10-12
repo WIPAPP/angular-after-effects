@@ -1,4 +1,4 @@
-﻿'use strict';
+﻿﻿﻿'use strict';
 
 angular.module('wipster.aftereffects', ['codemill.adobe'])
   .service('wAfterEffectsService', ['$q', '$log', '$timeout', 'cmAdobeService',
@@ -12,8 +12,8 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
         function unregisterJob(jobID) {
             delete jobs[jobID];
         };
-        function renderItem(outputPath, outputTemplate, renderTemplate) {
-            return { method: 'renderItem', args: [outputPath, outputTemplate, renderTemplate] };
+        function renderItem(outputPath, outputTemplate, renderTemplate, segmentNameAndIteration) {
+            return { method: 'renderItem', args: [outputPath, outputTemplate, renderTemplate, segmentNameAndIteration] };
         };
         function getActiveItem() {
             return { method: 'getActiveItem', returnsObject: true };
@@ -81,14 +81,14 @@ angular.module('wipster.aftereffects', ['codemill.adobe'])
                 : "Best Settings";
         };
 
-        this.renderActiveSequence = function (config, presetQuality) {
+        this.renderActiveSequence = function (config, outputTemplate, presetQuality, segmentNameAndIteration) {
             var deferred = $q.defer();
             var outputPath = adobeService.getFilePath(config.output);
-            runWithActiveSequenceCheck(renderItem(outputPath, presetQuality, getRenderTemplate(presetQuality)))
+            runWithActiveSequenceCheck(renderItem(outputPath, outputTemplate, presetQuality, segmentNameAndIteration))
                   .then(function (path) {
                       //We get a funny path from AE so we need to correct it.
-                      var pathOfRender = outputPath + (outputPath.endsWith("/") ? "" : "/") + path.split('/').pop();                       
-                      deferred.resolve(decodeURIComponent(pathOfRender));  
+                      var pathOfRender = outputPath + (outputPath.endsWith("/") ? "" : "/") + path.split('/').pop();
+                      deferred.resolve(decodeURIComponent(pathOfRender));
                   })
                   .catch(function (error) {
                       deferred.reject(error);
